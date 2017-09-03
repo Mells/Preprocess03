@@ -1,0 +1,48 @@
+##################### KEINE ÜBEREINSTIMMUNG #####################
+
+
+where;wo;aktiv;1/A2;I;av;;      - keine übereinstimmung von Buch zu xtag. Im Buch (wenn nicht in ph) av.
+                                  In xtag nicht als adverb vorhanden, fehler in xtag?
+
+numbers (ten etc)               - xtag kennt keine cardinal numbers, im Buch sind es adjective, in xtag nouns
+                                  oder determiners
+
+many;viele;aktiv;4/A2;I;a;;     - penn und Buch als adjective, xtag nur als det or Pron
+
+other: each other;einander, ...;passiv;1/C6;II;ph;;    - Im Buch und Penn adjective. in xtag adverb
+
+that    - IN/that vs Comp#that;Adv#that;Det#that;Pron;;;;
+
+own     - penn and book adjective, xtax determiner or verb
+
+
+No POS Match 12 {'many', "aren't", 'one', 'Where', 'that', 'seven', 'other', "there's", 'where', "one's", 'ten', 'own'}
+
+
+##################### NICHT GEFUNDEN ############################
+
+Not Found 13 {'OTW', 'OMG', 'seal-spotting', 'LOL', 'neither', 'anymore', 'eg', 'Elephants', 'Internet',
+'whale-watching', 'BFF', 'fundraising', 'asap'}
+
+
+##################### MEHR ALS EINE LESEART  #####################
+
+Double Reading 125 {'directions', 'Christmas', 'dressed', 'was', 'Tuesday', 'modest', 'hurt', 'December', 'politics',
+'means', 'Congratulations', 'interior', 'eyes', 'anything', 'January', 'boots', 'used', 'Friday', 'Hindu', 'underwater',
+'virgin', 'can', 'Chinese', 'Greek', 'jeans', 'whale', 'orange', 'Turkish', 'July', 'started', 'bags', 'squirrel',
+'run', 'latest', 'bronze', 'become', 'fit', 'Hogmanay', 'Wednesday', 'posted', 'upset', 'woods', 'are', 'August',
+'Are', 'English', 'cut', 'there', 'early', 'read', 'scared', 'November', 'Welsh', 'use', 'beat', 'Indian', 'February',
+'October', 'saw', 'fish', 'June', 'south', 'called', 'fed', 'Bengali', 'Thursday', 'trousers', 'Norman', 'September',
+'Saturday', 'come', 'feed', 'hit', "I'd", 'Horrors', 'bet', 'cost', 'later', 'were', 'set', 'put', 'Sunday',
+'vegetarian', 'sports', 'split', 'got', 'plastic', 'news', 'allowed', 'had', 'around', 'notes', 'May', 'east',
+'maths', 'left', 'German', 'fireworks', 'happened', 'sunglasses', 'March', 'silver', 'said', 'stairs', 'north',
+'April', 'French', 'Gaelic', 'secret', 'will', 'lost', 'lay', 'average', 'shut', 'Come', 'ground', 'let', 'Elizabethan',
+'displeased', 'Monday', 'need', 'Lights', 'head', 'hard', 'Roman'}
+
+###################################################################
+
+[('NVVC', '?', "one's")]
+pos :
+book:
+xtag:   N
+        Pron
