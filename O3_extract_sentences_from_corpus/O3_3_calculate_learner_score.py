@@ -21,23 +21,30 @@ def contains_learned_words(m_sentence, m_chapter, m_book):
         # (lemma, pos)
         lookup_lemma = m_lemma[0]
         lookup_pos = m_lemma[1]
+
         # ignore numbers and proper nouns
         if lookup_lemma == "@card@" or lookup_pos in ["NP", "NPS", "SENT", "#", "$", "\"", "''", "'", "(", ")", ",", ":"]:
             continue
+
         found_current_voc = lemma_chap_book_pos_dict.get(m_lemma, [])
+
         if len(found_current_voc) == 0:
             # the lemma was not found in the vocabulary
                 no_match -= 1
         else:
             # the lemma was found (several times) in the vocabulary
+
             worst_points = 1;    # the worst points you can reach
+
             # we keep the best result (best_points) as we have to iterate through all findings
             for found_lemma in found_current_voc:
                 # (chapter, book)
                 current_points = 0  # the best points you can reach
                 found_book = convert_string_to_int(found_lemma[1])
+
+                # It is in the same book or earlier
                 if base_book >= found_book:
-                    # It is in the same book or earlier
+
                     # If it is in the same book we have to check the chapters
                     if base_book == found_book:
                         if base_chapter == 'Welcome':
@@ -118,8 +125,37 @@ def load_lemma_chapter_book():
 
 # ------------------------------------- MAIN --------------------------------------------------------------
 
+def main():
+
+    print("#### starting loading lemma-chap-book-pos    ####")
+    load_lemma_chapter_book()
+    print("#### finished loading lemma-chap-book-pos    ####")
+
+    with open("./output/03_2_calculate_GDEX.csv", 'r') as readsent, open("./output/03_3_calculate_learner_score.csv",
+                                                                         "w") as writesent:
+        m_reader = csv.reader(readsent, delimiter=';')
+        m_writer = csv.writer(writesent, delimiter=';')
+        index = 1
+
+        for row in m_reader:
+            if index % 100000 == 0:
+                print("{:,}".format(index), "/", "{:,}".format(2461627))
+            index += 1
+
+            # 0       | 1       | 2    | 3    | 4        | 5        | 6
+            # vocable | chapter | book | gdex | sentence | lemmatag | lemmavocdict
+
+            chapter = row[1]
+            book = row[2]
+            lemma_tag = ast.literal_eval(row[5])
+
+            learner_number = contains_learned_words(lemma_tag, chapter, book)
+            # print(learner_number)
+            m_writer.writerow(row[:4] + [learner_number] + row[4:])
+    readsent.close()
+    writesent.close()
+
 if __name__ == "__main__":
-    new_list = []
 
     print("#### starting loading lemma-chap-book-pos    ####")
     load_lemma_chapter_book()
@@ -132,7 +168,7 @@ if __name__ == "__main__":
 
         for row in m_reader:
             if index % 100000 == 0:
-                print("{:,}".format(index), "/", 14200000)
+                print("{:,}".format(index), "/", "{:,}".format(12664549))
             index += 1
 
             # 0       | 1       | 2    | 3    | 4        | 5        | 6

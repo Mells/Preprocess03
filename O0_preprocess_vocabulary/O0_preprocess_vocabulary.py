@@ -5,8 +5,6 @@ import timeit
 
 import kph
 import treetaggerwrapper
-#from O0_preprocess_vocabulary.classes.class_morphology_information import Morphology_Information
-#from O0_preprocess_vocabulary.classes.class_morphology import Morphology
 from nltk import tokenize as np
 
 
@@ -22,7 +20,7 @@ one_reading_phrase = []
 
 exceptions = ['Hallo, ich heiße …', 'Hier, bitte!, Bitte schön!', 'Ausgeschlossen!, hier: Jetzt echt, oder?',
               'sobald, hier: als, in dem Moment, als ...', 'glücklich (Glück habend; Glück bringend)',
-              'darauf achten, (dass)', 'Wikinger/in; wikingisch', 'Längenmaß (91,44 cm)',
+              'darauf achten, (dass)', 'Längenmaß (91,44 cm)',
               '(entspricht dem deutschen Abitur)', '(Anrede)',
               '(Amtssprache in Indien)', '(als Schulfach)',
               '(nur hinter Uhrzeit zwischen Mitternacht und 12 Uhr mittags)',
@@ -78,13 +76,13 @@ word_class_bookxtag_dict = {'d': ['Det'], 's': ['N', 'PropN'], 'v': ['V'], 'av':
 
 # CD, EX, FW, IN/that, LS, POS, SENT, SYM, #, $, “, ``, (, ), ,, :
 
-word_class_xtagpenn_dict = {"A": ['JJ', 'JJR', 'JJS'], "Adv": ['RB', 'RBR', 'RBS', 'WRB'], "Conj": ['CC'],
-                            "Det": ['DT', 'PDT', 'WDT', 'IN/that'],
-                            "N": ['NN', 'NNS', 'NP', 'NVVC'], "Pron": ['PP', 'PP$', 'WP', 'WP$', 'NVVC'],
-                            "Prep": ['IN'], "PropN": ['NP', 'NPS'], "I": ['UH'], "Part": ['RP'],
-                            "V": ['MD', 'TO', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'VH', 'VHD', 'VHG', 'VHN',
-                                  'VHP', 'VHZ', 'VV', 'VVD', 'VVG', 'VVN', 'VVP', 'VVZ'],
-                            'NVC': ['NVVC'], 'VVC': ['NVVC']}
+word_class_xtagpenn_dict = {'A': ['JJ', 'JJR', 'JJS'], "Adv": ['RB', 'RBR', 'RBS', 'WRB'], "Conj": ['CC'],
+                            'Det': ['DT', 'PDT', 'WDT', 'IN/that'],
+                            'N': ['NN', 'NNS', 'NP'], 'Pron': ['PP', 'PP$', 'WP', 'WP$'],
+                            'Prep': ['IN'], 'PropN': ['NP', 'NPS'], 'I': ['UH'], 'Part': ['RP'],
+                            'V': ['MD', 'TO', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'VH', 'VHD', 'VHG', 'VHN',
+                                  'VHP', 'VHZ', 'VV', 'VVD', 'VVG', 'VVN', 'VVP', 'VVZ', 'V'],
+                            'NVC': ['NVC'], 'VVC': ['VVC']}
 
 
 # "Comp", "G", "Punct"
@@ -216,7 +214,7 @@ def deal_with_parenthesis_english(word):
                               first_half[0] + first_half[1].replace(')', ''),
                               first_half_without_sbsth + first_half[1].replace(')', ''),
                               first_half_without_sbsth + first_half[1].replace(')', '').replace(' sb', "")
-                                  .replace(" sth", "")]
+                                                                      .replace(" sth", "")]
             else:
                 array_word = [first_half[0],
                               first_half[0] + first_half[1].replace(')', ''),
@@ -401,7 +399,6 @@ def tagging_processed_vocable(m_processed_vocable, m_word_class):
     m_lemma_vocable = []
     m_tagged_lemma_vocable = []
     m_simple_tagged_lemma_vocable = []
-    change_simple = False
     # ['can']
     # [["can't"], ['cannot']]
     # print(m_processed_vocable)
@@ -460,11 +457,11 @@ def tagging_processed_vocable(m_processed_vocable, m_word_class):
         if word_class == 'ph':
             no_pos_match, not_found_xtag, m_tagged_processed_vocable, m_lemma_vocable, m_tagged_lemma_vocable, \
                 m_simple_tagged_lemma_vocable = process_a_phrase(m_processed_vocable, no_pos_match, not_found_xtag,
-                                                             first_to)
+                                                                 first_to)
         else:
             no_pos_match, not_found_xtag, m_tagged_processed_vocable, m_lemma_vocable, m_tagged_lemma_vocable, \
                 m_simple_tagged_lemma_vocable = process_a_word(m_processed_vocable, m_word_class, no_pos_match,
-                                                           not_found_xtag, first_to)
+                                                               not_found_xtag, first_to)
             # test:
             # if no_pos_match:
             #    print(status, "/", 3020, processed_vocable)
@@ -474,8 +471,8 @@ def tagging_processed_vocable(m_processed_vocable, m_word_class):
             #    print(status, "/", 3020, processed_vocable)
             #    print("\tNot Found:", set(not_found_xtag))
 
-    # print("tagged: ",m_tagged_processed_vocable, "\nlemma: ", m_lemma_vocable, "\ntaglemma: ", m_tagged_lemma_vocable,)
-    #print(m_simple_tagged_lemma_vocable)
+    # print("tagged: ",m_tagged_processed_vocable, "\nlemma: ", m_lemma_vocable, "\ntaglemma: ", m_tagged_lemma_vocable)
+    # print(m_simple_tagged_lemma_vocable)
     # print("x", m_simple_tagged_lemma_vocable)
     return m_tagged_processed_vocable, m_lemma_vocable, m_tagged_lemma_vocable, m_simple_tagged_lemma_vocable
 
@@ -788,8 +785,8 @@ def process_a_word(processed_item, m_word_class, no_pos_match, not_found_xtag, f
                     simple_reading_list.append(morph_pos)
                     lemma = morphology_information.lemma
                 else:  # technically a hack but if hat has just one reading anyway than take that
-                    # todo check that: how many? maybe better from book (but is ph)?
                     one_reading.append(processed_word)
+
                     reading_list.append(morphology_information.word_reading)
                     simple_reading_list.append(morph_pos)
                     lemma = morphology_information.lemma
@@ -819,27 +816,28 @@ def process_a_word(processed_item, m_word_class, no_pos_match, not_found_xtag, f
         # if there is a accepted reading
 
         # if reading_list:
+        if lemma == "":
+            # ('Camden',)
+            lemma = morphology.lemma[0]
+        # 3 Tuple - m_tagged_processed_vocable_part.append((processed_word, lemma, reading_list))
         m_tagged_processed_vocable_part.append((processed_word, reading_list))
         if processed_word == "to" and first_to:
             first_to = False
         else:
-            if lemma == "":
-                # ('Camden',)
-                lemma = morphology.lemma[0]
             m_lemma_vocable_part.append(lemma)
             m_tagged_lemma_vocable_part.append((lemma, reading_list))
             m_simple_tagged_lemma_vocable.append((lemma, simple_reading_list))
             if len(simple_reading_list) > 1:
                 change_simple = True
                 # [[(word, [tag1])][(word, [tag2])]]
-                #for tags in simple_reading_list:
+                # for tags in simple_reading_list:
                 #    m_simple_tagged_lemma_vocable.append([(lemma, tags)])
-            #else:
-                #m_simple_tagged_lemma_vocable.append((lemma, simple_reading_list[0]))
+            # else:
+                # m_simple_tagged_lemma_vocable.append((lemma, simple_reading_list[0]))
 
     if change_simple:
         # [('change', ['V']), ('one', ['Pron', 'N']), ('mind', ['N'])]
-        m_simple_tagged_lemma_vocable = split_simple_lemmma(m_simple_tagged_lemma_vocable)
+        m_simple_tagged_lemma_vocable = split_simple_lemma(m_simple_tagged_lemma_vocable)
     else:
         new_simple = []
         for t in m_simple_tagged_lemma_vocable:
@@ -856,7 +854,7 @@ def process_a_phrase(m_processed_item, no_pos_match, not_found_xtag, first_to):
     m_tagged_lemma_vocable_part = []
     m_simple_tagged_lemma_vocable = []
     change_simple = False
-    # print(m_processed_item)
+    print(m_processed_item)
     tags = tagger.tag_text(m_processed_item[0])
     # print(tags)
     # ['Welcome\tJJ\twelcome', 'to\tTO\tto']
@@ -865,18 +863,59 @@ def process_a_phrase(m_processed_item, no_pos_match, not_found_xtag, first_to):
     # ['ca\tMD\tca', "n't\tRB\tn't"]
     if len(m_processed_item) < len(tags):
         new_tag_array = []
-        for info in tags:
-            if '\'' in info:
-                position = tags.index(info)
-                earlier_word = tags[position - 1]
+        current_index_position = 0
+        # print(tags)
+        for current_word in tags:
+            if '\'' in current_word:    # apostrophe in word: "n't\tRB\tn't
+                earlier_word = tags[current_index_position - 1]
                 earlier_word = earlier_word.split("\t")
-                info = info.split("\t")
-                combined_word = earlier_word[0] + info[0]
-                del new_tag_array[position - 1]
-                new_tag_array.append(combined_word + '\tNVVC')
+                tag_earlier_word = earlier_word[1]
+                current_word = current_word.split("\t")
+                tag_current_word = current_word[1]
+                combined_word = earlier_word[0] + current_word[0]
+                del new_tag_array[current_index_position - 1]
+                # depending on the combination put together
+                # verb + verb ends with 've
+                print(current_word)
+                print(earlier_word)
+                # print(tag_earlier_word)
+
+                if m_processed_item in [["on one's own"]]:
+                    new_tag_array.append(combined_word + '\tPP')
+
+                else:
+                    # verb + have
+                    if current_word[0] == "'ve" and tag_earlier_word.startswith('V'):
+                        new_tag_array.append(combined_word + '\tVVC')
+
+                    # x + genitive s
+                    elif current_word[0] == "'s" and tag_current_word == 'POS':
+                        new_tag_array.append(combined_word + '\t' + tag_earlier_word)
+
+                    # noun/pronoun + would, will, are, have
+                    elif current_word[0] in ["'d", "'ll", "'re", "'ve"] and (tag_earlier_word.startswith('N') or
+                                                                             tag_earlier_word.startswith('P')):
+                        new_tag_array.append(combined_word + '\tNVC')
+
+                    # verb + negation ends with n't
+                    elif current_word[0] == "n't" and tag_earlier_word.startswith('V') or tag_earlier_word.startswith('MD'):
+                        new_tag_array.append(combined_word + '\tV')
+
+                    # pronoun + am
+                    elif current_word[0] == "'m":
+                        new_tag_array.append(combined_word + '\tNVC')
+
+                    # w-word/pronoun/there + is
+                    elif tag_earlier_word in ['WP', 'WRB', 'DT', 'NN', 'PP', 'EX'] and tag_current_word == 'VBZ':
+                        new_tag_array.append(combined_word + '\tNVC')
+                    else:
+                        raise Exception("Doesn't fit any category: " + str(m_processed_item) + str(earlier_word) + str(current_word))
             else:
-                new_tag_array.append(info)
+                new_tag_array.append(current_word)
+            current_index_position += 1
         tags = new_tag_array
+        print(tags)
+
     # print(tags)
     for m_word_info in tags:
         reading_list = []
@@ -884,6 +923,7 @@ def process_a_phrase(m_processed_item, no_pos_match, not_found_xtag, first_to):
         lemma = ""
 
         split_word = m_word_info.split("\t")
+        # print(split_word)
 
         # 0    | 1   | 2
         # word | Tag | Lemma
@@ -1037,6 +1077,7 @@ def process_a_phrase(m_processed_item, no_pos_match, not_found_xtag, first_to):
                 reading = morphology.get_reading_by_number(1)
                 # reading is returned as a tuple: (reading,)
                 morphology_information = MorphologyInformation(reading[0])
+
                 if split_word[1] in word_class_xtagpenn_dict.get(morphology_information.pos, 'nothing'):
                     reading_list.append(morphology_information.word_reading)
                     simple_reading_list.append(morphology_information.pos)
@@ -1046,8 +1087,8 @@ def process_a_phrase(m_processed_item, no_pos_match, not_found_xtag, first_to):
                     else:
                         lemma = morphology_information.lemma
                 else:  # technically a hack but if has just one reading anyway then take that
-                    # todo check that: how many? maybe better from book (but is ph)?
                     one_reading_phrase.append(m_word)
+
                     reading_list.append(morphology_information.word_reading)
                     simple_reading_list.append(morphology_information.pos)
                     lemma = morphology_information.lemma
@@ -1064,15 +1105,15 @@ def process_a_phrase(m_processed_item, no_pos_match, not_found_xtag, first_to):
             # print("\tAllReadings:", m_word, reading_list)
             all_double_reading.append(m_word)
         # if there is a accepted reading
-        #if reading_list:
+        # if reading_list:
+        if lemma == "":
+            # ('Camden',)
+            lemma = morphology.lemma[0]
+        # 3 Tuple - m_tagged_processed_vocable_part.append((m_word, lemma, reading_list))
         m_tagged_processed_vocable_part.append((m_word, reading_list))
         if m_word == "to" and first_to:
             first_to = False
         else:
-            if lemma == "":
-                # ('Camden',)
-                lemma = morphology.lemma[0]
-
             m_lemma_vocable_part.append(lemma)
             m_tagged_lemma_vocable_part.append((lemma, reading_list))
             m_simple_tagged_lemma_vocable.append((lemma, simple_reading_list))
@@ -1081,17 +1122,18 @@ def process_a_phrase(m_processed_item, no_pos_match, not_found_xtag, first_to):
             #    # [[(word, [tag1])][(word, [tag2])]]
             #    for tags in simple_reading_list:
             #        m_simple_tagged_lemma_vocable.append([(lemma, tags)])
-            #else:
+            # else:
             #    m_simple_tagged_lemma_vocable.append((lemma, simple_reading_list[0]))
 
     # print(m_simple_tagged_lemma_vocable)
     # if no_pos_match: print(no_pos_match)
     if change_simple:
         # [('change', ['V']), ('one', ['Pron', 'N']), ('mind', ['N'])]
-        m_simple_tagged_lemma_vocable = split_simple_lemmma(m_simple_tagged_lemma_vocable)
+        m_simple_tagged_lemma_vocable = split_simple_lemma(m_simple_tagged_lemma_vocable)
     else:
         new_simple = []
         for t in m_simple_tagged_lemma_vocable:
+            print(t, " - ", m_simple_tagged_lemma_vocable)
             new_simple.append((t[0], t[1][0]))
         m_simple_tagged_lemma_vocable = new_simple
 
@@ -1100,18 +1142,23 @@ def process_a_phrase(m_processed_item, no_pos_match, not_found_xtag, first_to):
         m_tagged_lemma_vocable_part, m_simple_tagged_lemma_vocable
 
 
-def split_simple_lemmma(x):
+def split_simple_lemma(x):
     height = 1
     width = len(x)
+    
     #   | V | Pron  | N |
     #   | V | N     | N |
+    
     for item in x:
         if len(item[1]) > 1:
             height *= len(item[1])
-    Matrix = [[0 for x in range(width)] for y in range(height)] # first: ^v, econd <->
+   
+    matrix = [[0 for w in range(width)] for h in range(height)]     # first: ^v, econd <->
+    
     repeat = height
     position = 0
     many_iterate = 1
+    
     for item in x:
         len_of_readings = len(item[1])
         if len(item[1]) > 1:
@@ -1121,19 +1168,20 @@ def split_simple_lemmma(x):
             for m in range(0, many_iterate):
                 for lof in range(0, len_of_readings):   # für die anzahl an readings
                     for i in range(0, repeat):
-                        Matrix[new_pos][position] = (item[0], item[1][lof])
+                        matrix[new_pos][position] = (item[0], item[1][lof])
                         new_pos += 1
         else:
             for i in range(0, height):
-                Matrix[i][position] = (item[0], item[1][0])
+                matrix[i][position] = (item[0], item[1][0])
         many_iterate *= len_of_readings
         position += 1
 
     simple_array = []
-    for simple_row in Matrix:
+    for simple_row in matrix:
         simple_array.append(simple_row)
 
     return simple_array
+
 
 # --------------------------------- SOUNDEX ----------------------------------------------------------------------------
 
@@ -1145,11 +1193,9 @@ def processing_soundex(mprocessed_vocable):
 
     # digits holds the soundex values for the alphabet
     digits = '01230120022455012623010202'
-    sndx = ''
     fc = ''
 
     soundex = []
-    l = 0
     if isinstance(mprocessed_vocable[0], list):
         for name in mprocessed_vocable:
             # split by space so it looks at each word separately
@@ -1161,7 +1207,8 @@ def processing_soundex(mprocessed_vocable):
                 l = len(word)
                 for c in word.upper():
                     if c.isalpha():
-                        if not fc: fc = c  # remember first letter
+                        if not fc: 
+                            fc = c  # remember first letter
                         d = digits[ord(c) - ord('A')]
                         # duplicate consecutive soundex digits are skipped
                         if not sndx or (d != sndx[-1]):
@@ -1216,16 +1263,19 @@ def processing_soundex(mprocessed_vocable):
 # --------------------------------- PROCESSING TRANSLATION -------------------------------------------------------------
 
 def processing_translation(m_word):
+    if ";" in m_word:
+        print(m_word)
     if not any(item in m_word for item in exceptions):
 
-        array_word = re.compile("(?<=[a-zßöäü/][a-zßöäü]|\)\-|[a-zßöäü\.\-][!\.\)\-])[,;]\s"
-                                "(?=[A-Za-ßöäüÜÄÖ\(][A-Za-zßöäü])(?![a-z][a-z]\))").split(m_word)
+        #array_word = re.compile("(?<=[a-zßöäü/][a-zßöäü] | \)\- | [a-zßöäü\.\-][!\.\)\-] )[,;]\s (?=[A-Za-ßöäüÜÄÖ\(][A-Za-zßöäü])(?![a-z][a-z]\))").split(m_word)
+        array_word = re.compile("((?<=[a-zßöäü/][a-zßöäü])|(?<=\)-)|(?<=[a-zßöäü.-][!.)-]))[,;]\s"
+                                "(?=[A-Za-ßöäüÜÄÖ(][A-Za-zßöäü])(?![a-z][a-z]\))").split(m_word)
 
         array_word = deal_with_punctuation_no_comma_german(array_word)
         processed = process_words(array_word)
 
-        # TODO etw, jdn
     else:
+        # print(m_word)
         processed = []
         word_array = ['x']
         if 'hier: ' in m_word:
@@ -1243,8 +1293,6 @@ def processing_translation(m_word):
             word_array = ['glücklich']
         elif 'darauf achten, (dass)' in m_word:
             word_array = ['darauf achten', 'darauf achten, dass']
-        elif 'Wikinger/in; wikingisch' in m_word:
-            word_array = ['Wikinger', 'Wikingerin', 'wikingisch']
         elif 'Längenmaß (91,44 cm)' in m_word:
             word_array = ['Längenmaß', '91,44 cm']
         elif '(entspricht dem deutschen Abitur)' in m_word:
@@ -1336,8 +1384,10 @@ def deal_with_punctuation_no_comma_german(m_array_word):
     return_array = []
     for word in m_array_word:
         if any(item in word for item in ['.', '?', '!', '…', '...']):
+            # print(word)
             word = re.sub("\s*\.\.\.\s*", " ", word)
             word = word.replace('.', '').replace('?', '').replace('!', '').replace(' …', '')
+            # print(word)
         return_array.append(word)
     return return_array
 
@@ -1362,25 +1412,27 @@ def process_words(m_array_word):
                 word_array = [middle_word, first_word + middle_word, first_word + middle_word + last_word,
                               middle_word + last_word]
                 processed.extend([[x.strip(' ')] for x in word_array])
+                # print(processed)
 
             # if parenthesis in the middle of the word e.g. Abschied(s)-
-            elif bool(re.search('[a-z]+\([a-z]+\)([a-z]+|\-)', word)):
+            elif bool(re.search('[a-z]+\([a-z]+\)([a-z]+|-)', word)):
                 # print(word)
                 if '/' in word:
-                    first_part = re.match('[a-z]+\([a-z]+\)\/[a-z]+\([a-z]+\)[a-z]*', word).group().split("/")
+                    first_part = re.match('[a-z]+\([a-z]+\)/[a-z]+\([a-z]+\)[a-z]*', word).group().split("/")
                     fw_fp = re.sub('\([a-z]+\)', '', first_part[0])
-                    sw_fp = fw_fp + first_part[0].replace(")", "").split("(")[1]
+                    sw_fp = fw_fp + first_part[0].replace(')', '').split('(')[1]
                     fw_sp = re.sub('\([a-z]+\)', '', first_part[1])
-                    sw_sp = first_part[1].replace(")", "").replace("(", "")
-                    third_part = re.sub('[a-z]+\([a-z]+\)\/[a-z]+\([a-z]+\)[a-z]*', '', word)
+                    sw_sp = first_part[1].replace(')', '').replace('(', '')
+                    third_part = re.sub('[a-z]+\([a-z]+\)/[a-z]+\([a-z]+\)[a-z]*', '', word)
                     word_array = [fw_fp + third_part, sw_fp + third_part, fw_sp + third_part, sw_sp + third_part]
-                    processed.extend([[x.strip(' ')] for x in word_array])
+                    processed.extend([[x.strip()] for x in word_array])
                 else:
                     # print(word)
                     first_word = re.sub('\([a-z]+\)', '', word)
                     second_word = word.replace("(", "").replace(")", "")
                     word_array = [first_word, second_word]
                     processed.extend([[x.strip(' ')] for x in word_array])
+                # print(processed)
 
             # if parenthesis directly after word
             # eg. ein(e), Lass(t) uns, hier: irgendein(e), ein(e) kleine(s, r), nach vorn(e)
@@ -1455,20 +1507,20 @@ def process_words(m_array_word):
                                 else:
                                     # the second word ends with a consonant
                                     word_array.append(iter_word + " " + first_word_of_second_part +
-                                                      endings_of_first_word_of_second_part[0])
+                                                      str(endings_of_first_word_of_second_part[0]))
                             else:
                                 # the first word does end on a consonant
                                 if any(item in first_word_of_second_part[-1] for item in ['a', 'e', 'i', 'o', 'u']):
                                     # the second word ends on a vocal e.g. kleine
                                     word_array.append(iter_word + " " + first_word_of_second_part +
-                                                      endings_of_first_word_of_second_part[0])
+                                                      str(endings_of_first_word_of_second_part[0]))
                                     word_array.append(first_word_of_first_part + " " + first_word_of_second_part +
-                                                      endings_of_first_word_of_second_part[1])
+                                                      str(endings_of_first_word_of_second_part[1]))
                                 else:
                                     # the second word ends with a consonant
                                     word_array.append(iter_word + " " + first_word_of_second_part +
-                                                      endings_of_first_word_of_second_part[0] +
-                                                      endings_of_first_word_of_second_part[1])
+                                                      str(endings_of_first_word_of_second_part[0]) +
+                                                      str(endings_of_first_word_of_second_part[1]))
                         processed.extend([[x.strip(' ')] for x in word_array])
 
                     # Lass(t) uns, (ganz) allein(e)
@@ -1534,11 +1586,11 @@ def process_words(m_array_word):
                     first_word_endings = re.search(pattern, word).group().replace("(", "").replace(")", "").split(", ")
                     second_word = word.split(") ")[1].replace("(", "").replace(")", "")
                     third_word = word.split(") ")[2]
-                    word_array = [first_word + first_word_endings[0] + " " + third_word,
-                                  first_word + first_word_endings[1] + " " + third_word,
-                                  first_word + first_word_endings[0] + " " + second_word + " " + third_word,
-                                  first_word + first_word_endings[1] + " " + second_word + " " + third_word]
-                    processed.extend([[x.strip(' ')] for x in word_array])
+                    word_array = [first_word + first_word_endings[0] + ' ' + third_word,
+                                  first_word + first_word_endings[1] + ' ' + third_word,
+                                  first_word + first_word_endings[0] + ' ' + second_word + ' ' + third_word,
+                                  first_word + first_word_endings[1] + ' ' + second_word + ' ' + third_word]
+                    processed.extend([[x.strip()] for x in word_array])
                     # print(processed)
                 else:
                     # print(word)
@@ -1559,8 +1611,8 @@ def process_words(m_array_word):
                     first_word = re.split("(?<=[a-zA-Z])\s(?=[a-zA-Z])", word)[0]
                     second_word = re.split("(?<=[a-zA-Z])\s(?=[a-zA-Z])", word)[1].split("(")[0]
                     second_word_endings = re.split("(?<=[a-zA-Z])\s(?=[a-zA-Z])", word)[1] \
-                        .split("(")[1].replace(")", "").split(", ")
-                    word_array = [first_word + " " + second_word]
+                        .split('(')[1].replace(')', '').split(', ')
+                    word_array = [first_word + ' ' + second_word]
 
                     if any(item in second_word[-1] for item in ['a', 'e', 'i', 'o', 'u']):
                         word_array.append(first_word + " " + second_word + second_word_endings[0])
@@ -1630,7 +1682,7 @@ def process_words(m_array_word):
                 # print(processed)
 
             # parenthesis directly before word that includes '/' e.g. (Straßen-/Verkehrs)schild
-            elif bool(re.search("\([a-zA-Zß]+\-/[a-zA-Z]+\)[a-zA-Z]+", word)):
+            elif bool(re.search("\([a-zA-Zß]+-/[a-zA-Z]+\)[a-zA-Z]+", word)):
                 # print(word)
                 main_word = word.split(")")[1]
                 prefixes = word.split(")")[0].replace("(", "").split("-/")
@@ -1639,9 +1691,9 @@ def process_words(m_array_word):
                 # print(processed)
 
             # parenthesis directly after word that includes '-' e.g. Spielzeug(-), Universität(s-)
-            elif bool(re.search("\([a-z]*\-\)", word)):
+            elif bool(re.search("\([a-z]*-\)", word)):
                 # print(word)
-                word_array = [re.sub("\([a-z]*\-\)", "", word)]
+                word_array = [re.sub("\([a-z]*-\)", "", word)]
                 processed.extend([[x.strip(' ')] for x in word_array])
                 # print(processed)
 
@@ -1656,13 +1708,13 @@ def process_words(m_array_word):
                                            word).group()
                     first_word = first_part.split("/")
                     second_word = re.search("(?<=\()[a-zA-ZüäöÜÄÖß]+(?=\))", word).group()
-                    word_array = [first_word[0] + " " + second_word, first_word[1] + " " + second_word]
+                    word_array = [first_word[0] + ' ' + second_word, first_word[1] + ' ' + second_word]
                 else:
                     # print(word)
                     first_word = re.sub("\([a-zA-ZüäöÜÄÖß]+\)", "", word)
                     second_word = re.search("(?<=\()[a-zA-ZüäöÜÄÖß]+(?=\))", word).group()
                     word_array = [first_word, first_word + second_word]
-                processed.extend([[x.strip(' ')] for x in word_array])
+                processed.extend([[x.strip()] for x in word_array])
                 # print(processed)
 
             # parenthesis after word with more than one word e.g. Ich bin zehn (Jahre alt)
@@ -1691,11 +1743,11 @@ def process_words(m_array_word):
                 # print(processed)
 
             # parenthesis directly before word with '-' e.g. (Zeitungs-)Bericht
-            elif bool(re.search("\([a-zA-Z]+\-\)", word)):
+            elif bool(re.search("\([a-zA-Z]+-\)", word)):
                 # print(word)
                 if "hier: " in word:
                     word = word.replace("hier: ", "")
-                first_version = re.sub("\([a-zA-Z]+\-\)", "", word)
+                first_version = re.sub("\([a-zA-Z]+-\)", "", word)
                 second_version = word.replace("(", "").replace(")", "")
                 word_array = [first_version, second_version]
                 processed.extend([[x.strip(' ')] for x in word_array])
@@ -1715,7 +1767,7 @@ def process_words(m_array_word):
                     prefixes = word.split(")")[0].replace("(", "").split("/")
                     word_array = [first_word, prefixes[0] + first_word, prefixes[1] + first_word]
                 processed.extend([[x.strip(' ')] for x in word_array])
-                # print(processed)
+                #print(processed)
 
             # word that still contains '/' - (über etw) traurig/aufgebracht sein
             elif "/" in word:
@@ -1756,12 +1808,12 @@ def process_words(m_array_word):
 
             # a '/' in word to seperate between forms e.g. Deutsche/r, kein/e
             elif bool(re.search("/[er]\Z", word)):
-                # print(word)
+                #print(word)
                 first_word = word.split("/")[0]
                 second_word = word.replace("/", "")
                 word_array = [first_word, second_word]
                 processed.extend([[x.strip(' ')] for x in word_array])
-                # print(processed)
+                #print(processed)
 
             # slash denoting separate words
             elif '/' in word and len(word.split()) == 1 and '-' not in word:
@@ -1916,8 +1968,8 @@ def processing_translation_soundex(m_processed_translation):
     # print(koelner_soundex)
     return koelner_soundex
 
+# --------------------------------- CLASS ------------------------------------------------------------------------------
 
-# --------------------------------- CLASSES ----------------------------------------------------------------------------
 
 class Morphology:
 
@@ -2005,7 +2057,6 @@ class Morphology:
 
 
 class MorphologyInformation:
-
     def __init__(self, m_reading):
         self.lemma = ""
         self.pos = ""
@@ -2220,77 +2271,6 @@ class MorphologyInformation:
 
 # --------------------------------- MAIN -------------------------------------------------------------------------------
 
-def main():
-    # missing one translation
-    # info: deleted rows: ;als;aktiv;3/A2;I;k;;
-    # info:              ;der/die/das;passiv;1/C2;II;d;;
-    # info:              became;;passiv;6/P11;II;;;
-    # info:              golf;;passiv;6/O5;II;;;
-
-    # no word class
-    # info: introduced and added word class prefix to: pre-;Vor-;passiv;4/A1;II;prefix;; is under exceptions process_word
-
-    # info: added word class Noun to: Miss (BE);hier: Frau Lehrerin (Anrede);passiv;4/C1;II;;; to be consistent with xtag
-    # info: added word class Noun to: Mr (= Mister);Herr (Anrede);aktiv;1/B6;I;;*Mr* Scott;ID1389841 to be consistent with xtag
-
-    status = 1
-    start = timeit.default_timer()
-
-    # 0       | 1            | 2      | 3          | 4    | 5       | 6            | 7
-    # Vokabel | Uebersetzung | Status | Fundstelle | Band | Wortart | Beispielsatz | Hinweis
-
-    with open('Vokabelliste.csv', 'r') as vocin, open("updated_vocabulary.csv", 'w') as vocout:
-        vocreader = csv.reader(vocin, delimiter=';')
-        vocwriter = csv.writer(vocout, delimiter=';')
-
-        header = next(vocreader)
-        vocwriter.writerow(['_id'] + [header[0]] + ['processed_vocable'] + ['tagged_processed_vocable'] +
-                           ['processed_vocable_soundex'] + ['lemma_vocable'] + ['tagged_lemma_vocable'] +
-                           ['tagged_lemma_simple_vocable'] +
-                           [header[1]] + ['processed_translation'] + ['tagged_processed_translation'] +
-                           ['processed_translation_soundex'] + ['lemma_translation'] + ['tagged_lemma_translation'] +
-                           header[2:])
-
-        for row in vocreader:
-            print(status, '/', 3018)
-            row_id = status
-
-            # print(row[0])
-            # if ',' in row[0]:
-            #    print(row[0])
-
-            processed_vocable = processing_vocabulary(row[0])
-            # print(processed_vocable)
-
-            word_class = row[5]
-            tagged_processed_vocable, lemma_vocable, tagged_lemma_vocable, tagged_lemma_simple_vocable = \
-                tagging_processed_vocable(processed_vocable, word_class)
-
-            processed_vocable_soundex = processing_soundex(processed_vocable)
-
-            processed_translation = processing_translation(row[1])  # -- not done
-            tagged_processed_translation = ['']
-            processed_translation_soundex = processing_translation_soundex(processed_translation)
-            lemma_translation = ['']
-            tagged_lemma_translation = ['']
-
-            vocwriter.writerow([row_id] + [row[0]] + [processed_vocable] + [tagged_processed_vocable] +
-                               [processed_vocable_soundex] + [lemma_vocable] + [tagged_lemma_vocable] +
-                               [tagged_lemma_simple_vocable] +
-                               [row[1]] + [processed_translation] + [tagged_processed_translation] +
-                               [processed_translation_soundex] + [lemma_translation] + [tagged_lemma_translation] +
-                               row[2:])
-
-            status += 1
-    print("\n\n")
-    print("Not Found", len(set(all_not_found)), set(all_not_found), "\n")
-    # print("Double Reading", len(set(all_double_reading)), set(all_double_reading), "\n")
-    print("No POS Match", len(set(all_pos_not_matched)), set(all_pos_not_matched), "\n")
-    print("Noun", len(as_noun), as_noun, "\n")
-    print("One", len(one_reading), one_reading, "\n")
-    print("OnePh", len(one_reading_phrase), one_reading_phrase, "\n")
-    print(timeit.default_timer() - start)
-
 if __name__ == '__main__':
 
     # missing one translation
@@ -2300,17 +2280,20 @@ if __name__ == '__main__':
     # info:              golf;;passiv;6/O5;II;;;
 
     # no word class
-    # info: introduced and added word class prefix to: pre-;Vor-;passiv;4/A1;II;prefix;; is under exceptions process_word
+    # info: introduced and added word class prefix to: pre-;Vor-;passiv;4/A1;II;prefix;;
+    # is under exceptions process_word
 
-    # info: added word class Noun to: Miss (BE);hier: Frau Lehrerin (Anrede);passiv;4/C1;II;;; to be consistent with xtag
-    # info: added word class Noun to: Mr (= Mister);Herr (Anrede);aktiv;1/B6;I;;*Mr* Scott;ID1389841 to be consistent with xtag
+    # info: added word class Noun to: Miss (BE);hier: Frau Lehrerin (Anrede);passiv;4/C1;II;;;
+    # to be consistent with xtag
+    # info: added word class Noun to: Mr (= Mister);Herr (Anrede);aktiv;1/B6;I;;*Mr* Scott;ID1389841
+    # to be consistent with xtag
 
     start = timeit.default_timer()
 
     # 0       | 1            | 2      | 3          | 4    | 5       | 6            | 7
     # Vokabel | Uebersetzung | Status | Fundstelle | Band | Wortart | Beispielsatz | Hinweis
 
-    with open('Vokabelliste.csv', 'r') as vocin, open("updated_vocabulary.csv", 'w') as vocout:
+    with open('Vokabelliste.csv', 'r') as vocin, open("updated_vocabulary_3_tuple.csv", 'w') as vocout:
         vocreader = csv.reader(vocin, delimiter=';')
         vocwriter = csv.writer(vocout, delimiter=';')
 
@@ -2325,10 +2308,6 @@ if __name__ == '__main__':
         for row in vocreader:
             print(status, '/', 3018)
             row_id = status
-
-            # print(row[0])
-            # if ',' in row[0]:
-            #    print(row[0])
 
             processed_vocable = processing_vocabulary(row[0])
             # print(processed_vocable)

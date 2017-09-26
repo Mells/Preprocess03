@@ -1,4 +1,4 @@
-class Morphology_Information:
+class MorphologyInformation:
         
     def __init__(self, m_reading):
         self.lemma = ""

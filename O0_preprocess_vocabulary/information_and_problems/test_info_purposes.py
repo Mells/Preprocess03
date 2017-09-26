@@ -296,6 +296,7 @@ def deal_with_punctuation_comma(word):
         word = word.replace(',', '')
     return word
 
+
 # --------------------------------- TESTS ------------------------------------------------------------------------------
 
 def test01():
@@ -343,7 +344,7 @@ def test01():
                 # print(len(row))
 
 
-def split_simple_lemmma(x):
+def split_simple_lemma(x):
     height = 1
     width = len(x)
     #   | V | Pron  | N |
@@ -384,6 +385,28 @@ def split_simple_lemmma(x):
 
     #for row in Matrix:
     #    print(row)
+
+
+def array_to_table():
+    exceptions = ['Hallo, ich heiße …', 'Hier, bitte!, Bitte schön!', 'Ausgeschlossen!, hier: Jetzt echt, oder?',
+                  'sobald, hier: als, in dem Moment, als ...', 'glücklich (Glück habend; Glück bringend)',
+                  'darauf achten, (dass)', 'Wikinger/in; wikingisch', 'Längenmaß (91,44 cm)',
+                  '(entspricht dem deutschen Abitur)', '(Anrede)',
+                  '(Amtssprache in Indien)', '(als Schulfach)',
+                  '(nur hinter Uhrzeit zwischen Mitternacht und 12 Uhr mittags)',
+                  '(nur hinter Uhrzeit zwischen 12 Uhr mittags und Mitternacht)', '(zur Terminplanung)',
+                  '(bei Freunden)',
+                  '(an Kleidungsstücken)', '(= 0,3048 Meter)', '(Briefschlussformel)', '(von Großbritannien)',
+                  '(Untereinheit des brit. Pfunds)', '(Londoner)', '(Alternativbezeichnung ', '(Kobold)',
+                  '(systematische wiss. Beobachtung außerhalb des Labors)', '(in der Thronfolge)',
+                  '(Einrichtung zur Betreuung sterbender Menschen)', '(beim Rugby)', '(= 1,609 km)', '(Zeit)', '(Geld)',
+                  '(auf dem Wasser)', '(jd, der den Text flüsternd vorspricht)', '(Sprache)',
+                  'der/die sich im Internat um die Schüler/innen eines Hauses kümmert/kümmern',
+                  'Aufsicht führende/r Lehrer/in', 'Vergangenheitsform von']
+    #print(" \\\\\n".join([str(entry) for entry in exceptions]))
+    for entry in exceptions:
+        print("\item " + entry)
+
 # --------------------------------- MAIN -------------------------------------------------------------------------------
 
 # 0       | 1            | 2      | 3          | 4    | 5       | 6            | 7
@@ -392,4 +415,5 @@ def split_simple_lemmma(x):
 if __name__ == '__main__':
 
     # test01()
-    split_simple_lemmma()
+    #split_simple_lemma()
+    array_to_table()

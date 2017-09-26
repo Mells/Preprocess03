@@ -3,24 +3,24 @@ import ast
 
 freq_most_common = []
 freq_common = []
-#named_entities = []
-#punctuation_pos = ["SENT", "#", "$", "\"", "''", "'", "(", ")", ",", ":"]
+# punctuation_pos = ["SENT", "#", "$", "\"", "''", "'", "(", ")", ",", ":"]
 
 # ------------------------------------- GDEX POINTS -----------------------------------------------------
 
 
-# Sentence length: a sentence between 10 and 25 words long was preferred, with longer and shorter ones penalized.
-# in our case 20
-# max Points = 2
+# Sentence length: a sentence between 10 and 20 words long was preferred, with and shorter ones penalized.
+# No sentence is longer than 20 words.
+
 def sentence_length(m_lemma_tag):
-    points = 20
+    # points = 20
     sent_length = len(m_lemma_tag)
 
+    # sentence is greater than 10
     if sent_length >= 10:
-        points = 25
+        points = 20
+    # sentence is smaller than 10
     else:
-        if sent_length < 10:
-            points = 25 * (sent_length/10)
+        points = 20 * (sent_length/10)
 
     return points
 
@@ -31,10 +31,15 @@ def sentence_length(m_lemma_tag):
 def common_words(m_lemma_tag):
     points = 0
     x = 100 / len(m_lemma_tag)
-    #print(len(m_sentence[1]))
+    # print(len(m_sentence[1]))
+
+    # one free 'Punct' for end of sentence every other is negative
+    punctuations = 0
     for m_word in m_lemma_tag:
         if m_word[1] == 'Punct':
-            points += x
+            if punctuations == 0:
+                points += x
+                punctuations += 1
         else:
             # if you ignore proper nouns the resulting 'good' sentences are really bad
             if m_word[0] in freq_most_common:
@@ -42,14 +47,13 @@ def common_words(m_lemma_tag):
             elif m_word[0] in freq_common:
                 points += x/2
 
-
     # for m_word in m_sentence[1]:
     #     if m_word[0] in freq_most_common:
     #         points += x
     #     elif m_word[0] in freq_common:
     #         points += x / 2
 
-    points = 40 * (points/100)
+    points = 50 * (points/100)
     return points
 
 
@@ -63,7 +67,7 @@ def contain_pronouns_anaphora(m_lemma_tag):
         if m_word[1] == "Pron":
             found -= 1
 
-    points = 25 * (found/x)
+    points = 20 * (found/x)
     return points
 
 
@@ -72,12 +76,12 @@ def contain_pronouns_anaphora(m_lemma_tag):
 # max Points = 2
 def whole_sentence(m_sentence):
     points = 10
-    punctuation = ["!", "\"", ".", "?"]
-    quote = ['\'', '"']
-    first_letter = m_sentence[0][:1]
-    last_letter = m_sentence[0][-1]
+    punctuation = ["!", ".", "?"]
+    #quote = ['\'', '"']
+    first_letter = m_sentence[:1]
+    last_letter = m_sentence[-1]
 
-    if first_letter.isupper() or first_letter in quote:
+    if first_letter.isupper():  # or first_letter in quote:
         if last_letter in punctuation:
             pass    # is upper and has punctuation
         else:
@@ -94,11 +98,11 @@ def whole_sentence(m_sentence):
 # ------------------------------------- LOAD FREQUENCIES --------------------------------------------------
 
 def load_frequencies():
-    with open('lemma.num.txt', 'r') as freq_in:
+    with open('lemma.num.17000.txt', 'r') as freq_in:
         f = csv.reader(freq_in, delimiter=' ')
         row_number = 1
         for row in f:
-            if row_number <= 17000:
+            if row_number <= 7000:
                 freq_most_common.append(row[2])
             else:
                 freq_common.append(row[2])
@@ -106,21 +110,17 @@ def load_frequencies():
     freq_in.close()
 
 
-#def load_ner():
-#    with open('./input/NER.txt', 'r') as f:
-#        for ner in f:
-#            named_entities.append(ner.lower())
-#    f.close()
-
-
 def compute_points(m_sentence, m_lemma_tag):
-    # ---- GDEX ----
-    points_len = sentence_length(m_lemma_tag)                # max 25p
-    # print("len", points_len, "/", 25)
-    points_common = common_words(m_lemma_tag)                # max 40p
-    # print("com", points_common, "/", 40)
-    points_pronoun = contain_pronouns_anaphora(m_lemma_tag)  # max 25p
-    # print("pro", points_pronoun, "/", 25)
+
+    points_len = sentence_length(m_lemma_tag)                # max 20p
+    # print("len", points_len, "/", 20)
+
+    points_common = common_words(m_lemma_tag)                # max 50p
+    # print("com", points_common, "/", 50)
+
+    points_pronoun = contain_pronouns_anaphora(m_lemma_tag)  # max 20p
+    # print("pro", points_pronoun, "/", 20)
+
     points_whole_sent = whole_sentence(m_sentence)          # max 10p
     # print("sent", points_whole_sent, "/", 10)
 
@@ -128,17 +128,61 @@ def compute_points(m_sentence, m_lemma_tag):
     return round(m_gdex_points, 1)
 
 
+def main():
+    if __name__ == "__main__":
+        print("#### starting loading sentence file          ####")
+
+        with open("./output/03_1_sentences_from_corpus.txt", 'r') as read_sent, \
+                open("./output/03_2_calculate_GDEX.csv", "w") as s_out:
+            index = 1
+            writer = csv.writer(s_out, delimiter=';')
+            good_sentence = 0
+            bad_sentence = 0
+            for line in read_sent:
+                if index % 100000 == 0:
+                    print("{:,}".format(index), "/", "{:,}".format(15500000))
+                index += 1
+
+                row_as_list = ast.literal_eval(line)
+
+                # 0       | 1       | 2    | 3        | 4        | 5
+                # vocable | chapter | book | sentence | lemmatag | lemmavocdict
+
+                sentence = row_as_list[3]
+                lemma_tag = row_as_list[4]
+
+                gdex_number = compute_points(sentence, lemma_tag)
+                row_as_list.insert(3, gdex_number)
+
+                if gdex_number > 60:
+                    good_sentence += 1
+                    writer.writerow([row_as_list[0]] + [row_as_list[1]] + [row_as_list[2]] + [row_as_list[3]]
+                                    + [row_as_list[4]] + [row_as_list[5]] + [row_as_list[6]])
+                else:
+                    bad_sentence += 1
+
+        s_out.close()
+        read_sent.close()
+        print("#### finished loading sentence file          ####")
+        print("good:", good_sentence)
+        print("bad:", bad_sentence)
+
+
 if __name__ == "__main__":
-    # new_list = []
-    #load_ner()
     print("#### starting loading sentence file          ####")
-    with open("./output/03_1_sentences_from_corpus.txt", 'r') as readsent, \
+    average = 0
+    index = 1
+    highest = 0
+    lowest = 100
+    with open("./output/03_1_sentences_from_corpus.txt", 'r') as read_sent, \
             open("./output/03_2_calculate_GDEX.csv", "w") as s_out:
-        index = 1
+
         writer = csv.writer(s_out, delimiter=';')
-        for line in readsent:
+        good_sentence = 0
+        bad_sentence = 0
+        for line in read_sent:
             if index % 100000 == 0:
-                print("{:,}".format(index), "/", "{:,}".format(14200000))
+                print("{:,}".format(index), "/", "{:,}".format(15500000))
             index += 1
 
             row_as_list = ast.literal_eval(line)
@@ -152,8 +196,27 @@ if __name__ == "__main__":
             gdex_number = compute_points(sentence, lemma_tag)
             row_as_list.insert(3, gdex_number)
 
-            writer.writerow([row_as_list[0]] + [row_as_list[1]] + [row_as_list[2]] + [row_as_list[3]]
-                            + [row_as_list[4]] + [row_as_list[5]] + [row_as_list[6]])
+            average += gdex_number
+            if gdex_number > highest:
+                highest = gdex_number
+            if gdex_number < lowest:
+                lowest = gdex_number
+
+            if gdex_number > 50:
+                #print(sentence)
+                #if "I can smell" in sentence:
+                #    print("gdex:", gdex_number, sentence)
+                good_sentence += 1
+                writer.writerow([row_as_list[0]] + [row_as_list[1]] + [row_as_list[2]] + [row_as_list[3]]
+                                + [row_as_list[4]] + [row_as_list[5]] + [row_as_list[6]])
+            else:
+                bad_sentence += 1
+
     s_out.close()
-    readsent.close()
+    read_sent.close()
     print("#### finished loading sentence file          ####")
+    print("good:\t", good_sentence)
+    print("bad:\t", bad_sentence)
+    print("avg:\t", gdex_number / index)
+    print("high:\t", highest)
+    print("low:\t", lowest)
